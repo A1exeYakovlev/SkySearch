@@ -1,23 +1,60 @@
 import { useEffect, useState } from "react"
 
 export default function FlightList() {
+
+
     function Flight() {
-        return (
-            <div className="app__flightlist">
-                <FlightLeg></FlightLeg>
-                <FlightLeg></FlightLeg>
-            </div>
-        )
-
-
-    }
-
-    function FlightLeg() {
         const [flightsData, setFlightsData] = useState(null);
         const [flightsDataLoading, setFlightsDataLoading] = useState(false);
         const [errorLoadingData, setErrorLoadingData] = useState("");
 
-        let flightsArr, bestPricesArr;
+        let flightsArr;
+
+        if (flightsData) {
+            const { result: { flights } } = flightsData;
+            flightsArr = flights;
+            // console.log(flightsArr)
+        }
+
+        useEffect(function () {
+
+            async function importData() {
+                try {
+                    setFlightsDataLoading(true);
+                    setErrorLoadingData("");
+
+                    const data = (await import("../flights.json")).default
+
+                    if (!data) throw new Error("Ошибка в загрузке данных");
+                    setFlightsData(data);
+                    // console.log(data)
+                } catch (err) {
+                    console.error(err);
+                    setErrorLoadingData(err.message)
+                } finally { setFlightsDataLoading(false) }
+            }
+            importData();
+        }, [setFlightsData, setFlightsDataLoading, setErrorLoadingData])
+
+
+        return (
+            <div className="app__flightlist">
+                {flightsArr && (
+                    flightsArr[0]?.flight?.legs.map((leg, i) => (
+                        <FlightLeg flightLegNum={i} flightsData={flightsData} flightsDataLoading={flightsDataLoading} errorLoadingData={errorLoadingData} key={leg.segments[0].departureCity.uid}></FlightLeg>
+                    ))
+                )}
+                <button>Выбрать</button>
+            </div>
+        )
+
+
+
+    }
+
+    function FlightLeg({ flightsData, flightsDataLoading, errorLoadingData, flightLegNum }) {
+
+        let flightsArr;
         let departureCity;
         let departureAirport;
         let arrivalCity;
@@ -29,13 +66,12 @@ export default function FlightList() {
         let transferCount;
 
 
-        if (flightsData?.result) {
-            const { result: { flights, bestPrices } } = flightsData;
+        if (flightsData) {
+            const { result: { flights } } = flightsData;
             flightsArr = flights;
-            bestPricesArr = bestPrices;
-            const { airline: arln, departureAirport: departAir, departureCity: departCity, departureDate: departDate } = flightsArr[0]?.flight?.legs[0]?.segments[0];
-            const { arrivalAirport: arrivAir, arrivalCity: arrivCity, arrivalDate: arrivDate } = flightsArr[0]?.flight?.legs[0]?.segments.at(-1);
-            const duration = flightsArr[0]?.flight?.legs[0]?.segments.reduce((total, cur) => total + cur.travelDuration, 0);
+            const { airline: arln, departureAirport: departAir, departureCity: departCity, departureDate: departDate } = flightsArr[0]?.flight?.legs[flightLegNum]?.segments[0];
+            const { arrivalAirport: arrivAir, arrivalCity: arrivCity, arrivalDate: arrivDate } = flightsArr[0]?.flight?.legs[flightLegNum]?.segments.at(-1);
+            const duration = flightsArr[0]?.flight?.legs[flightLegNum]?.duration;
             departureCity = departCity;
             departureAirport = departAir;
             arrivalCity = arrivCity;
@@ -43,7 +79,7 @@ export default function FlightList() {
             airline = arln;
             travelDuration.hours = Math.floor(duration / 60);
             travelDuration.minutes = duration % 60;
-            transferCount = flightsArr[0]?.flight?.legs[0]?.segments.length - 1;
+            transferCount = flightsArr[0]?.flight?.legs[flightLegNum]?.segments.length - 1;
 
             function getDateInfo(inputData, outputDate) {
                 const dateObj = new Date(inputData);
@@ -63,25 +99,7 @@ export default function FlightList() {
         }
 
 
-        useEffect(function () {
 
-            async function importData() {
-                try {
-                    setFlightsDataLoading(true);
-                    setErrorLoadingData("");
-
-                    const data = (await import("../flights.json")).default
-
-                    if (!data) throw new Error("Ошибка в загрузке данных");
-                    setFlightsData(data);
-                    console.log(data)
-                } catch (err) {
-                    console.error(err);
-                    setErrorLoadingData(err.message)
-                } finally { setFlightsDataLoading(false) }
-            }
-            importData();
-        }, [setFlightsData, setFlightsDataLoading, setErrorLoadingData])
 
         return (
             <>
@@ -113,7 +131,6 @@ export default function FlightList() {
                         <p className="flight-leg__airline">
                             {`Рейс выполняет: ${airline.caption}`}
                         </p>
-                        <button>Выбрать</button>
                     </div >)
                 }
             </>
