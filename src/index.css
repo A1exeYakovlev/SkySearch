@@ -1,13 +1,83 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --background-light: #fff;
+  --accent1: #0087c9;
+  -accent2: #ffb168;
+}
+
+html {
+  font-size: 62.5%;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.app {
+  background-color: var(--background-light);
+}
+
+.app__sidebar {
+  grid-column: 1/2;
+  grid-row: 1/3;
+}
+
+.app__flightlist {
+  grid-column: 2/3;
+  grid-row: 2/3;
+}
+
+.app__logo {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 2rem;
+  max-width: 140rem;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 30rem 1fr;
+  grid-template-rows: 5rem 1fr;
+}
+
+.flight-leg:not(:last-child) {
+  border-bottom: 0.18rem solid var(--accent1);
+}
+
+.flight-leg {
+  font-size: 2.2rem;
+
+  span {
+    color: var(--accent1);
+  }
+}
+
+.flight-leg__dest {
+  border-bottom: 0.1rem solid #cecece;
+}
+
+.flight-leg__time {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flight-leg__airline {
+  font-size: 1.8rem;
 }
