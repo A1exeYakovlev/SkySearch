@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react"
+import { useState } from "react";
+export default function FlightList({ flightsData, flightsDataLoading, errorLoadingData }) {
 
-export default function FlightList() {
-    const [flightsData, setFlightsData] = useState(null);
-    const [flightsDataLoading, setFlightsDataLoading] = useState(false);
-    const [errorLoadingData, setErrorLoadingData] = useState("");
     const [displayedNumber, setDisplayedNumber] = useState(2);
 
     function handleShowMore() {
@@ -15,28 +12,8 @@ export default function FlightList() {
     if (flightsData) {
         const { result: { flights } } = flightsData;
         flightsArr = flights;
-        console.log(flightsArr)
+        // console.log(flightsData)
     }
-
-    useEffect(function () {
-
-        async function importData() {
-            try {
-                setFlightsDataLoading(true);
-                setErrorLoadingData("");
-
-                const data = (await import("../flights.json")).default
-
-                if (!data) throw new Error("Ошибка в загрузке данных");
-                setFlightsData(data);
-                // console.log(data)
-            } catch (err) {
-                console.error(err);
-                setErrorLoadingData(err.message)
-            } finally { setFlightsDataLoading(false) }
-        }
-        importData();
-    }, [setFlightsData, setFlightsDataLoading, setErrorLoadingData])
 
     return (
 
@@ -66,7 +43,6 @@ function Flight({ flightsDataLoading, errorLoadingData, flight }) {
             <button>Выбрать</button>
         </div >
     )
-
 }
 
 function FlightLeg({ flightsDataLoading, errorLoadingData, flightLeg }) {
@@ -80,7 +56,6 @@ function FlightLeg({ flightsDataLoading, errorLoadingData, flightLeg }) {
     let airline;
     let travelDuration = {};
     let transferCount;
-
 
     if (flightLeg) {
 
@@ -112,8 +87,6 @@ function FlightLeg({ flightsDataLoading, errorLoadingData, flightLeg }) {
         getDateInfo(arrivDate, arrivalDate)
 
     }
-
-
 
 
     return (

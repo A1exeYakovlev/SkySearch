@@ -81,3 +81,8 @@ code {
 .flight-leg__airline {
   font-size: 1.8rem;
 }
+
+.sidebar__caption {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
