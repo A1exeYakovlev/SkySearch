@@ -86,3 +86,26 @@ code {
   font-size: 1.6rem;
   font-weight: 700;
 }
+
+.flight-leg__top {
+  padding: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--accent1);
+  color: var(--background-light);
+}
+
+.flight-leg__top-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.flight-leg__top-price {
+  font-size: 2.8rem;
+}
+
+.flight-leg__top-descr {
+  font-size: 1.6rem;
+}

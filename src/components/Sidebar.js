@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 export default function Sidebar({ children }) {
     return (
         <div className="sidebar app__sidebar">
@@ -53,17 +51,17 @@ export function Filter({ filterBy, onFilterBy }) {
     )
 }
 
-export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMaxPriceRange }) {
+export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMaxPriceRange, highestPrice }) {
 
 
     function handleMinPriceRange(e) {
         const val = parseInt(e.target.value);
-        if (!isNaN(val)) onMinPriceRange(val);
+        !isNaN(val) ? onMinPriceRange(val) : onMinPriceRange(0);
     }
 
     function handleMaxPriceRange(e) {
         const val = parseInt(e.target.value);
-        if (!isNaN(val)) onMaxPriceRange(val);
+        !isNaN(val) ? onMaxPriceRange(val) : onMaxPriceRange(highestPrice.current);
     }
 
     return (

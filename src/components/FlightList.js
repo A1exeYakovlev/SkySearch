@@ -1,5 +1,5 @@
 import { useState } from "react";
-export default function FlightList({ filterBy, sortBy, flightsData, flightsDataLoading, errorLoadingData }) {
+export default function FlightList({ minPriceRange, maxPriceRange, filterBy, sortBy, flightsData, flightsDataLoading, errorLoadingData }) {
 
     const [displayedNumber, setDisplayedNumber] = useState(2);
 
@@ -11,21 +11,19 @@ export default function FlightList({ filterBy, sortBy, flightsData, flightsDataL
 
     if (flightsData) {
         const { result: { flights } } = flightsData;
+        filteredFlights = flights
 
-        if (!filterBy) {
-            filteredFlights = flights
-        }
+        filteredFlights = filteredFlights.filter(flight => flight?.flight?.price.total.amount >= minPriceRange);
+        filteredFlights = filteredFlights.filter(flight => flight?.flight?.price.total.amount <= maxPriceRange);
 
         if (filterBy === "single-transfer") {
-            filteredFlights = flights.filter(flight => flight?.flight?.legs[0]?.segments.length === 2 && flight?.flight?.legs[1]?.segments.length === 2);
+            filteredFlights = filteredFlights.filter(flight => flight?.flight?.legs[0]?.segments.length === 2 && flight?.flight?.legs[1]?.segments.length === 2);
         }
 
         if (filterBy === "no-transfer") {
-            filteredFlights = flights.filter(flight => flight?.flight?.legs[0]?.segments.length === 1 && flight?.flight?.legs[1]?.segments.length === 1);
+            filteredFlights = filteredFlights.filter(flight => flight?.flight?.legs[0]?.segments.length === 1 && flight?.flight?.legs[1]?.segments.length === 1);
         }
 
-        console.log(filteredFlights)
-        console.log(flightsData)
 
         if (sortBy === "price-increase") {
             filteredFlights.sort((flightA, flightB) => flightA?.flight?.price?.total?.amount - flightB?.flight?.price?.total?.amount);
@@ -78,10 +76,9 @@ function Flight({ flightsDataLoading, errorLoadingData, flight }) {
                 {flight && !errorLoadingData && (
                     <div className="flight-leg__top">
                         <p>{carrier?.caption}</p>
-
-                        <div>
-                            <p>{`${singlePassengerTotalPrice} ${singlePassengerTotalCur}`}</p>
-                            <p>Стоимость для одного возрослого пассажира</p>
+                        <div className="flight-leg__top-info">
+                            <p className="flight-leg__top-price">{`${singlePassengerTotalPrice} ${singlePassengerTotalCur}`}</p>
+                            <p className="flight-leg__top-descr">Стоимость для одного возрослого пассажира</p>
                         </div>
                     </div>
                 )}

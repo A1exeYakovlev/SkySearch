@@ -2,7 +2,7 @@ import Sidebar from "./components/Sidebar";
 import { Sorter, Filter, PickAirlines, PriceRange } from "./components/Sidebar";
 import FlightList from "./components/FlightList";
 import Logo from "./components/Logo";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function App() {
   const [flightsData, setFlightsData] = useState(null);
@@ -14,9 +14,20 @@ function App() {
   const [maxPriceRange, setMaxPriceRange] = useState(1000000);
   const [pickedAirlines, setPickedAirlines] = useState([]);
 
+  const highestPrice = useRef(0);
 
   useEffect(function () {
+    if (flightsData) {
+      highestPrice.current = flightsData?.result?.flights?.reduce((maxPrice, flight) => {
+        const flightTotalPrice = parseInt(flight?.flight?.price?.total?.amount) || 0;
+        return Math.max(maxPrice, flightTotalPrice);
+      }, 0)
 
+      setMaxPriceRange(highestPrice.current);
+    }
+  }, [flightsData, setFlightsData])
+
+  useEffect(function () {
     async function importData() {
       try {
         setFlightsDataLoading(true);
@@ -26,7 +37,7 @@ function App() {
 
         if (!data) throw new Error("Ошибка в загрузке данных");
         setFlightsData(data);
-        // console.log(data)
+
       } catch (err) {
         console.error(err);
         setErrorLoadingData(err.message)
@@ -39,14 +50,13 @@ function App() {
     <div className="app">
       <div className="container">
         <Logo />
-        {/* <Sidebar sortBy={sortBy} onSortBy={setSortBy} filterBy={filterBy} onFilterBy={setFilterBy} maxPriceRange={maxPriceRange} minPriceRange={minPriceRange} onMaxPriceRange={setMaxPriceRange} onMinPriceRange={setMinPriceRange} pickedAirlines={pickedAirlines} onPickedAirlines={setPickedAirlines}></Sidebar> */}
         <Sidebar flightsData={flightsData}>
           <Sorter sortBy={sortBy} onSortBy={setSortBy} />
           <Filter filterBy={filterBy} onFilterBy={setFilterBy} />
-          <PriceRange minPriceRange={minPriceRange} maxPriceRange={maxPriceRange} onMinPriceRange={setMinPriceRange} onMaxPriceRange={setMaxPriceRange} />
+          <PriceRange highestPrice={highestPrice} minPriceRange={minPriceRange} maxPriceRange={maxPriceRange} onMinPriceRange={setMinPriceRange} onMaxPriceRange={setMaxPriceRange} />
           <PickAirlines flightsData={flightsData} pickedAirlines={pickedAirlines} onPickAirlines={setPickedAirlines} />
         </Sidebar>
-        <FlightList sortBy={sortBy} filterBy={filterBy} flightsData={flightsData} flightsDataLoading={flightsDataLoading} errorLoadingData={errorLoadingData}></FlightList>
+        <FlightList minPriceRange={minPriceRange} maxPriceRange={maxPriceRange} sortBy={sortBy} filterBy={filterBy} flightsData={flightsData} flightsDataLoading={flightsDataLoading} errorLoadingData={errorLoadingData}></FlightList>
       </div>
     </div >
   );
