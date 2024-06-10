@@ -46,7 +46,7 @@ function App() {
           <PriceRange minPriceRange={minPriceRange} maxPriceRange={maxPriceRange} onMinPriceRange={setMinPriceRange} onMaxPriceRange={setMaxPriceRange} />
           <PickAirlines flightsData={flightsData} pickedAirlines={pickedAirlines} onPickAirlines={setPickedAirlines} />
         </Sidebar>
-        <FlightList flightsData={flightsData} flightsDataLoading={flightsDataLoading} errorLoadingData={errorLoadingData}></FlightList>
+        <FlightList filterBy={filterBy} flightsData={flightsData} flightsDataLoading={flightsDataLoading} errorLoadingData={errorLoadingData}></FlightList>
       </div>
     </div >
   );

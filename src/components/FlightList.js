@@ -1,5 +1,5 @@
 import { useState } from "react";
-export default function FlightList({ flightsData, flightsDataLoading, errorLoadingData }) {
+export default function FlightList({ filterBy, flightsData, flightsDataLoading, errorLoadingData }) {
 
     const [displayedNumber, setDisplayedNumber] = useState(2);
 
@@ -7,19 +7,33 @@ export default function FlightList({ flightsData, flightsDataLoading, errorLoadi
         setDisplayedNumber(curNum => curNum + 2)
     }
 
-    let flightsArr;
+    let filteredFlights;
 
     if (flightsData) {
         const { result: { flights } } = flightsData;
-        flightsArr = flights;
-        // console.log(flightsData)
+
+        if (!filterBy) {
+            filteredFlights = flights
+        }
+
+        if (filterBy === "single-transfer") {
+            filteredFlights = flights.filter(flight => flight.flight.legs[0].segments.length === 2 && flight.flight.legs[1].segments.length === 2);
+        }
+
+        if (filterBy === "no-transfer") {
+            filteredFlights = flights.filter(flight => flight.flight.legs[0].segments.length === 1 && flight.flight.legs[1].segments.length === 1);
+        }
+
+        console.log(filteredFlights)
+        console.log(flightsData)
+
     }
 
     return (
 
         <div>
-            {flightsArr && (
-                flightsArr.slice(0, displayedNumber).map((flight, i) => (
+            {filteredFlights && (
+                filteredFlights.slice(0, displayedNumber).map((flight, i) => (
                     <Flight flight={flight} key={flight.flightToken} flightsDataLoading={flightsDataLoading} errorLoadingData={errorLoadingData}></Flight>
                 ))
             )}
