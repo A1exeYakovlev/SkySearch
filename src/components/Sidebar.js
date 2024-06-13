@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 export default function Sidebar({ children }) {
     return (
-        <div className="sidebar app__sidebar">
-            <form onSubmit={(e) => e.preventDefault}>
+        <div className="app__sidebar">
+            <form className="sidebar__form" onSubmit={(e) => e.preventDefault}>
                 {children}
             </form>
         </div>
@@ -15,21 +15,21 @@ export function Sorter({ sortBy, onSortBy }) {
         onSortBy(e.target.value);
     }
     return (
-        <>
+        <div className="sidebar__wrap">
             <p className="sidebar__caption">Сортировать</p>
-            <div>
+            <div className="sidebar__input-row">
                 <input id="price-increase" type="radio" name="sorting" value={"price-increase"} checked={sortBy === "price-increase"} onChange={handleSorting} />
-                <label htmlFor="radio1"> - по возрастанию цены</label>
+                <label className="sidebar__label" htmlFor="radio1"> - по возрастанию цены</label>
             </div>
-            <div>
+            <div className="sidebar__input-row">
                 <input id="price-decrease" type="radio" name="sorting" value={"price-decrease"} checked={sortBy === "price-decrease"} onChange={handleSorting} />
-                <label htmlFor="radio2"> - по убыванию цены</label>
+                <label className="sidebar__label" htmlFor="radio2"> - по убыванию цены</label>
             </div>
-            <div>
+            <div className="sidebar__input-row">
                 <input id="travel-duration" type="radio" name="sorting" value={"travel-duration"} checked={sortBy === "travel-duration"} onChange={handleSorting} />
-                <label htmlFor="radio3"> - по времени в пути</label>
+                <label className="sidebar__label" htmlFor="radio3"> - по времени в пути</label>
             </div>
-        </>
+        </div>
     )
 }
 
@@ -39,23 +39,21 @@ export function Filter({ filterBy, onFilterBy }) {
     }
 
     return (
-        <div>
+        <div className="sidebar__wrap">
             <p className="sidebar__caption">Фильтровать</p>
-            <div>
+            <div className="sidebar__input-row">
                 <input id="checkbox1" type="checkbox" name="transfer-filter" value="single-transfer" checked={filterBy === "single-transfer"} onChange={handleFilter} />
-                <label htmlFor="checkbox1"> - 1 пересадка</label>
+                <label className="sidebar__label" htmlFor="checkbox1"> - 1 пересадка</label>
             </div>
-            <div>
+            <div className="sidebar__input-row">
                 <input id="no-transfer" type="checkbox" name="transfer-filter" value="no-transfer" checked={filterBy === "no-transfer"} onChange={handleFilter} />
-                <label htmlFor="no-transfer"> - без пересадок</label>
+                <label className="sidebar__label" htmlFor="no-transfer"> - без пересадок</label>
             </div>
         </div>
     )
 }
 
 export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMaxPriceRange, highestPrice, lowestPrice }) {
-
-
     function handleMinPriceRange(e) {
         const val = parseInt(e.target.value);
         if (isNaN(val)) onMinPriceRange("");
@@ -71,15 +69,15 @@ export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMa
     }
 
     return (
-        <div>
+        <div className="sidebar__wrap">
             <p className="sidebar__caption">Цена</p>
-            <div>
-                <label htmlFor="min-price">От</label>
-                <input id="min-price" type="text" value={minPriceRange} onChange={handleMinPriceRange} placeholder={lowestPrice} />
+            <div className="sidebar__input-row ">
+                <label className="sidebar__label" htmlFor="min-price">От</label>
+                <input className="sidebar__input-min-price" id="min-price" type="text" value={minPriceRange} onChange={handleMinPriceRange} placeholder={lowestPrice} />
             </div>
-            <div>
-                <label htmlFor="max-price">До</label>
-                <input id="max-price" type="text" value={maxPriceRange} onChange={handleMaxPriceRange} placeholder={highestPrice} />
+            <div className="sidebar__input-row">
+                <label className="sidebar__label" htmlFor="max-price">До</label>
+                <input className="sidebar__input-max-price" id="max-price" type="text" value={maxPriceRange} onChange={handleMaxPriceRange} placeholder={highestPrice} />
             </div>
         </div>
     )
@@ -144,23 +142,23 @@ export function PickAirlines({ minPriceRange, maxPriceRange, filteredFlights, be
     }, [filteredFlights, filterBy, bestPricesArr, setAirlinesBestPrices, uniqueAirlinesArr])
 
     return (
-        <>
+        <div className="sidebar__wrap">
             <p className="sidebar__caption">Авиакомпании</p>
-            {flightsDataLoading && !errorLoadingData && <p className="message--sidebar">Данные загружаются...</p>}
+            {flightsDataLoading && !errorLoadingData && <p className="sidebar__message">Данные загружаются...</p>}
             {errorLoadingData && <p>{errorLoadingData}</p>}
             {!flightsDataLoading && uniqueAirlinesArr.length === 0 && !errorLoadingData && (<p className="message--sidebar">Нет совпадений</p>)}
             {!flightsDataLoading && uniqueAirlinesArr.length > 0 && !errorLoadingData && (
                 <div>
                     {uniqueAirlinesArr.map((airline, i) => (
-                        <div key={airline} >
+                        <div className="sidebar__input-row" key={airline} >
                             <input id={`checkbox${i}`} type="checkbox" name="airlines" value={airline} checked={pickedAirlines.includes(airline)} onChange={handlePickAirline} />
-                            <label htmlFor={`checkbox${i}`}>{airline}</label>
-                            <span>{` от ${airlinesBestPrices[i]}`}</span>
+                            <label className="sidebar__label" htmlFor={`checkbox${i}`}>{` - ${airline}`}</label>
+                            <span className="sidebar__label-price">{` от ${airlinesBestPrices[i]}`}</span>
                         </div>
                     ))}
                 </div>
             )
             }
-        </>
+        </div>
     );
 }

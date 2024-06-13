@@ -13,17 +13,18 @@ export default function FlightList({ pickedAirlines, displayedNumber, onShowMore
 
     return (
         <>
-            {flightsDataLoading && !errorLoadingData && <p className="message">Данные загружаются...</p>}
-            {errorLoadingData && <p>{errorLoadingData}</p>}
-            {!flightsDataLoading && flightsToDisplay.length === 0 && !errorLoadingData && (<p className="message">Нет подходящих рейсов</p>)}
+            {flightsDataLoading && !errorLoadingData && <p className="app__flightlist-message">Данные загружаются...</p>}
+            {errorLoadingData && <p className="app__flightlist-message">{errorLoadingData}</p>}
+            {!flightsDataLoading && flightsToDisplay.length === 0 && !errorLoadingData && (<p className="app__flightlist-message">Нет подходящих рейсов</p>)}
             {!flightsDataLoading && flightsToDisplay.length > 0 && !errorLoadingData && (
-                <div>
+                <div className="app__flightlist">
                     {flightsToDisplay.slice(0, displayedNumber).map((flight, i) => (
                         <Flight flight={flight} key={flight.flightToken} />
                     ))
-                    }</div>
+                    }
+                    <button className="app__show-more-btn show-more-btn" onClick={onShowMore}>Показать еще</button>
+                </div>
             )}
-            <button onClick={onShowMore}>Показать еще</button>
         </>
     )
 }
@@ -40,24 +41,25 @@ function Flight({ flight }) {
     }
 
     return (
-        <div className="app__flightlist">
-            <div className="flight-leg">
-                <div className="flight-leg__top">
-                    <p>{carrier?.caption}</p>
-                    <div className="flight-leg__top-info">
-                        <p className="flight-leg__top-price">{`${singlePassengerTotalPrice} ${singlePassengerTotalCur}`}</p>
-                        <p className="flight-leg__top-descr">Стоимость для одного взрослого пассажира</p>
-                    </div>
+        <div className="flight app__flight">
+            <div className="flight__top">
+                <p>{carrier?.caption}</p>
+                <div className="flight__top-info">
+                    <p className="flight__top-price">{`${singlePassengerTotalPrice} ${singlePassengerTotalCur}`}</p>
+                    <p className="flight__top-descr">Стоимость для одного взрослого пассажира</p>
                 </div>
+            </div>
+            <div className="flight-leg-wrap">
                 {flight && (
                     flight?.flight?.legs.map((leg, i) => (
                         <FlightLeg flightLeg={leg} key={leg.segments[0]?.departureDate} />
                     ))
                 )
                 }
-                <button>Выбрать</button>
             </div>
-        </div>)
+            <button className="select-btn">Выбрать</button>
+        </div>
+    )
 }
 
 function FlightLeg({ flightLeg }) {
@@ -85,6 +87,7 @@ function FlightLeg({ flightLeg }) {
         travelDuration.minutes = duration % 60;
         transferCount = flightLeg?.segments.length - 1;
 
+
         function getDateInfo(inputData, outputDate) {
             const dateObj = new Date(inputData);
             const monthArr = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
@@ -102,31 +105,31 @@ function FlightLeg({ flightLeg }) {
     }
 
     return (
-        <>
+        <div className="flight-leg">
             <p className="flight-leg__dest">
                 {`${departureCity?.caption}, ${departureAirport?.caption}`}
                 <span>{` (${departureAirport?.uid})`}</span>
-                {` ➡️ ${arrivalCity?.caption}, ${arrivalAirport?.caption}`}
+                {`  ➡️  ${arrivalCity?.caption}, ${arrivalAirport?.caption}`}
                 <span>{` (${arrivalAirport?.uid})`}</span>
             </p>
             <div className="flight-leg__time">
                 <p>
                     {`${departureDate.hours}:${departureDate.minutes}`}
-                    <span>{` ${departureDate.date} ${departureDate.month} ${departureDate.dayOfWeek}`}</span>
+                    <span className="flight-leg__time-date">{` ${departureDate.date} ${departureDate.month} ${departureDate.dayOfWeek}`}</span>
                 </p>
                 <p>
                     {`⌚ ${travelDuration.hours} ч ${travelDuration.minutes} мин`}
                 </p>
                 <p>
-                    <span>{`${arrivalDate.date} ${arrivalDate.month} ${arrivalDate.dayOfWeek} `}</span>
+                    <span className="flight-leg__time-date">{`${arrivalDate.date} ${arrivalDate.month} ${arrivalDate.dayOfWeek} `}</span>
                     {`${arrivalDate.hours}:${arrivalDate.minutes}`}
                 </p>
             </div>
-            {transferCount && (<div>{`${transferCount} пересадка`}</div>)
-            }
+            {!!transferCount && (<div className="flight-leg__transfer">{`${transferCount} пересадка`}</div>)}
             <p className="flight-leg__airline">
                 {`Рейс выполняет: ${airline.caption}`}
             </p>
-        </>)
+        </div>
+    )
 }
 
