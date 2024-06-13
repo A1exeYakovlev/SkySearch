@@ -56,6 +56,14 @@ code {
   grid-template-columns: 30rem 1fr;
   grid-template-rows: 5rem 1fr;
 }
+.message {
+  text-align: center;
+  font-size: 2.2rem;
+}
+
+.message--sidebar {
+  font-size: 1.2rem;
+}
 
 .flight-leg:not(:last-child) {
   border-bottom: 0.18rem solid var(--accent1);
@@ -82,11 +90,6 @@ code {
   font-size: 1.8rem;
 }
 
-.sidebar__caption {
-  font-size: 1.6rem;
-  font-weight: 700;
-}
-
 .flight-leg__top {
   padding: 0.8rem;
   display: flex;
@@ -108,4 +111,9 @@ code {
 
 .flight-leg__top-descr {
   font-size: 1.6rem;
+}
+
+.sidebar__caption {
+  font-size: 1.6rem;
+  font-weight: 700;
 }

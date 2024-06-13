@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react";
+
 export default function Sidebar({ children }) {
     return (
         <div className="sidebar app__sidebar">
-            <form>
+            <form onSubmit={(e) => e.preventDefault}>
                 {children}
             </form>
         </div>
@@ -32,10 +34,10 @@ export function Sorter({ sortBy, onSortBy }) {
 }
 
 export function Filter({ filterBy, onFilterBy }) {
-
     function handleFilter(e) {
-        onFilterBy(e.target.value);
+        filterBy === e.target.value ? onFilterBy("") : onFilterBy(e.target.value);
     }
+
     return (
         <div>
             <p className="sidebar__caption">Фильтровать</p>
@@ -51,17 +53,21 @@ export function Filter({ filterBy, onFilterBy }) {
     )
 }
 
-export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMaxPriceRange, highestPrice }) {
+export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMaxPriceRange, highestPrice, lowestPrice }) {
 
 
     function handleMinPriceRange(e) {
         const val = parseInt(e.target.value);
-        !isNaN(val) ? onMinPriceRange(val) : onMinPriceRange(0);
+        if (isNaN(val)) onMinPriceRange("");
+
+        else onMinPriceRange(val);
     }
 
     function handleMaxPriceRange(e) {
         const val = parseInt(e.target.value);
-        !isNaN(val) ? onMaxPriceRange(val) : onMaxPriceRange(highestPrice.current);
+        if (isNaN(val)) onMaxPriceRange("");
+
+        else onMaxPriceRange(val);
     }
 
     return (
@@ -69,30 +75,92 @@ export function PriceRange({ minPriceRange, maxPriceRange, onMinPriceRange, onMa
             <p className="sidebar__caption">Цена</p>
             <div>
                 <label htmlFor="min-price">От</label>
-                <input id="min-price" type="text" value={minPriceRange} onChange={handleMinPriceRange} />
+                <input id="min-price" type="text" value={minPriceRange} onChange={handleMinPriceRange} placeholder={lowestPrice} />
             </div>
             <div>
                 <label htmlFor="max-price">До</label>
-                <input id="max-price" type="text" value={maxPriceRange} onChange={handleMaxPriceRange} />
+                <input id="max-price" type="text" value={maxPriceRange} onChange={handleMaxPriceRange} placeholder={highestPrice} />
             </div>
         </div>
     )
 }
 
-export function PickAirlines({ flightsData }) {
-    let bestPricesArr;
+export function PickAirlines({ minPriceRange, maxPriceRange, filteredFlights, bestPricesArr, filterBy, flightsDataLoading, errorLoadingData, pickedAirlines, onPickedAirlines }) {
+    const [uniqueAirlinesArr, setUniqueAirlinesArr] = useState([]);
+    const [airlinesBestPrices, setAirlinesBestPrices] = useState([]);
 
-    if (flightsData) {
-        const { result: { bestPrices } } = flightsData;
-        bestPricesArr = bestPrices;
-        // console.log(bestPricesArr)
+    function handlePickAirline(e) {
+        const airline = e.target.value;
+        if (pickedAirlines.includes(airline)) {
+            onPickedAirlines(cur => cur.filter((item) => item !== airline))
+        };
+
+        if (!pickedAirlines.includes(airline)) {
+            onPickedAirlines(cur => [...cur, airline])
+        }
     }
+
+    useEffect(function updateUniqueAirlinesArr() {
+        setUniqueAirlinesArr([...new Set(filteredFlights
+            .map((flight) => flight?.flight?.carrier.caption))]
+            .sort((a, b) => a.localeCompare(b)));
+    }, [filteredFlights, setUniqueAirlinesArr])
+
+    useEffect(function updateAirlinesBestPrices() {
+
+        function getAirlinesBestPrices(transfer) {
+
+            return uniqueAirlinesArr.map((airline) => {
+                const relevantBestFlights = bestPricesArr[transfer]?.bestFlights
+                    .filter((filteredFlight) => filteredFlight?.carrier?.caption === airline);
+
+                if (relevantBestFlights.length > 0) {
+                    const currency = relevantBestFlights[0]?.price?.currency;
+                    const price = relevantBestFlights.reduce((minPrice, flight) => {
+                        const curPrice = parseInt(flight?.price?.amount);
+                        return (Math.min(minPrice, curPrice))
+
+                    }, relevantBestFlights[0]?.price?.amount)
+                    return `${Number(price)} ${currency}`;
+                }
+                return null;
+            })
+        }
+
+        if (filterBy === "single-transfer") {
+            setAirlinesBestPrices(() => getAirlinesBestPrices("ONE_CONNECTION"));
+        }
+
+        if (filterBy === "no-transfer") {
+            setAirlinesBestPrices(() => getAirlinesBestPrices("DIRECT"));
+        }
+
+        if (!filterBy) {
+            const single = getAirlinesBestPrices("ONE_CONNECTION");
+            const direct = getAirlinesBestPrices("DIRECT");
+            setAirlinesBestPrices([...new Set([...single, ...direct])]);
+        }
+
+    }, [filteredFlights, filterBy, bestPricesArr, setAirlinesBestPrices, uniqueAirlinesArr])
+
     return (
         <>
-            <div>
-                <input type="checkbox" />
-                <label htmlFor="checkbox1">Air France</label>
-            </div>
+            <p className="sidebar__caption">Авиакомпании</p>
+            {flightsDataLoading && !errorLoadingData && <p className="message--sidebar">Данные загружаются...</p>}
+            {errorLoadingData && <p>{errorLoadingData}</p>}
+            {!flightsDataLoading && uniqueAirlinesArr.length === 0 && !errorLoadingData && (<p className="message--sidebar">Нет совпадений</p>)}
+            {!flightsDataLoading && uniqueAirlinesArr.length > 0 && !errorLoadingData && (
+                <div>
+                    {uniqueAirlinesArr.map((airline, i) => (
+                        <div key={airline} >
+                            <input id={`checkbox${i}`} type="checkbox" name="airlines" value={airline} checked={pickedAirlines.includes(airline)} onChange={handlePickAirline} />
+                            <label htmlFor={`checkbox${i}`}>{airline}</label>
+                            <span>{` от ${airlinesBestPrices[i]}`}</span>
+                        </div>
+                    ))}
+                </div>
+            )
+            }
         </>
-    )
+    );
 }
