@@ -42,8 +42,8 @@ export function Filter({ filterBy, onFilterBy }) {
         <div className="sidebar__wrap">
             <p className="sidebar__caption">Фильтровать</p>
             <div className="sidebar__input-row">
-                <input id="checkbox1" type="checkbox" name="transfer-filter" value="single-transfer" checked={filterBy === "single-transfer"} onChange={handleFilter} />
-                <label className="sidebar__label" htmlFor="checkbox1"> - 1 пересадка</label>
+                <input id="single-transfer" type="checkbox" name="transfer-filter" value="single-transfer" checked={filterBy === "single-transfer"} onChange={handleFilter} />
+                <label className="sidebar__label" htmlFor="single-transfer"> - 1 пересадка</label>
             </div>
             <div className="sidebar__input-row">
                 <input id="no-transfer" type="checkbox" name="transfer-filter" value="no-transfer" checked={filterBy === "no-transfer"} onChange={handleFilter} />
@@ -151,8 +151,8 @@ export function PickAirlines({ minPriceRange, maxPriceRange, filteredFlights, be
                 <div>
                     {uniqueAirlinesArr.map((airline, i) => (
                         <div className="sidebar__input-row" key={airline} >
-                            <input id={`checkbox${i}`} type="checkbox" name="airlines" value={airline} checked={pickedAirlines.includes(airline)} onChange={handlePickAirline} />
-                            <label className="sidebar__label" htmlFor={`checkbox${i}`}>{` - ${airline}`}</label>
+                            <input id={`airlines-checkbox${i}`} type="checkbox" name="airlines" value={airline} checked={pickedAirlines.includes(airline)} onChange={handlePickAirline} />
+                            <label className="sidebar__label" htmlFor={`airlines-checkbox${i}`}>{` - ${airline}`}</label>
                             <span className="sidebar__label-price">{` от ${airlinesBestPrices[i]}`}</span>
                         </div>
                     ))}
