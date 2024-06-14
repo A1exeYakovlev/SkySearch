@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/A1exeYakovlev/SkySearch/static/css/main.c7a00db1.css",
-    "main.js": "/A1exeYakovlev/SkySearch/static/js/main.d211b1da.js",
-    "static/js/204.300cb879.chunk.js": "/A1exeYakovlev/SkySearch/static/js/204.300cb879.chunk.js",
-    "index.html": "/A1exeYakovlev/SkySearch/index.html",
-    "main.c7a00db1.css.map": "/A1exeYakovlev/SkySearch/static/css/main.c7a00db1.css.map",
-    "main.d211b1da.js.map": "/A1exeYakovlev/SkySearch/static/js/main.d211b1da.js.map"
+    "main.css": "/SkySearch/static/css/main.c7a00db1.css",
+    "main.js": "/SkySearch/static/js/main.47357f37.js",
+    "static/js/204.300cb879.chunk.js": "/SkySearch/static/js/204.300cb879.chunk.js",
+    "index.html": "/SkySearch/index.html",
+    "main.c7a00db1.css.map": "/SkySearch/static/css/main.c7a00db1.css.map",
+    "main.47357f37.js.map": "/SkySearch/static/js/main.47357f37.js.map"
   },
   "entrypoints": [
     "static/css/main.c7a00db1.css",
-    "static/js/main.d211b1da.js"
+    "static/js/main.47357f37.js"
   ]
 }
