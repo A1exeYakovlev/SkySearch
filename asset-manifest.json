@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/SkySearch/static/css/main.c7a00db1.css",
-    "main.js": "/SkySearch/static/js/main.fcc72852.js",
+    "main.js": "/SkySearch/static/js/main.10bf433f.js",
     "static/js/204.300cb879.chunk.js": "/SkySearch/static/js/204.300cb879.chunk.js",
     "index.html": "/SkySearch/index.html",
     "main.c7a00db1.css.map": "/SkySearch/static/css/main.c7a00db1.css.map",
-    "main.fcc72852.js.map": "/SkySearch/static/js/main.fcc72852.js.map"
+    "main.10bf433f.js.map": "/SkySearch/static/js/main.10bf433f.js.map"
   },
   "entrypoints": [
     "static/css/main.c7a00db1.css",
-    "static/js/main.fcc72852.js"
+    "static/js/main.10bf433f.js"
   ]
 }
