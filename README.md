@@ -6,6 +6,7 @@ It utilizes JSON data for a predefined ticket search from Moscow to London and b
 - Search results are displayed in sets of 2 items. User can increase the number by 2 at each button click;
 - User can sort flights by price (ascending/descending order) or by travel time;
 - User can filter flights by transfer count, price range, and airline;
+- Price range inputs displays (as placeholders) the minimum and maximum prices for flights compatible with active filters.
 - Users can select an airline from a list that only displays airlines compatible with active filters.
 - If the selected airline becomes incompatible after applying new filters, it will be deselected.
 - The app displayes the message if the data in loading, if no flights are available after filtering, or when the error occurs.
