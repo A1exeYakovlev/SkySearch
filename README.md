@@ -1,20 +1,23 @@
-## Available Scripts
+## About
+The app displays airline ticket search results and offers real-time filtering and sorting options.
+It utilizes JSON data for a predefined ticket search from Moscow to London and back on a specific date. 
 
-In the project directory, you can run:
+## Features
+- Search results are displayed in sets of 2 items. User can increase the number by 2 at each button click;
+- User can sort flights by price (ascending/descending order) or by travel time;
+- User can filter flights by transfer count, price range, and airline;
+- Users can select an airline from a list that only displays airlines compatible with active filters.
+- If the selected airline becomes incompatible after applying new filters, it will be deselected.
+- The app displayes the message if the data in loading, if no flights are available after filtering, or when the error occurs.
+- If there are no flights after filtering the app shows an according message.
+- Responsive design.
 
-### `npm start`
+## Technologies
+- React, JavaScript, CSS, HTML, BEM.
+- Built with create-react-app
 
-Runs the app in the development mode.\
+## How to run locally
 
-### `npm test`
+`npm start` - runs the app in the development mode,
 
-Launches the test runner in the interactive watch mode.\
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-
-### `npm run eject`
-
-This command will remove the single build dependency from your project.
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+`npm run build` - builds the app for production to the `build` folder.
