@@ -14,7 +14,7 @@ It utilizes JSON data for a predefined ticket search from Moscow to London and b
 - Responsive design.
 
 ## Technologies
-- React, JavaScript, CSS, HTML, BEM.
+- React, TypeScript, CSS, HTML, BEM.
 - Built with create-react-app
 
 ## How to run locally
