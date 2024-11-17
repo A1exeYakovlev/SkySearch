@@ -11,8 +11,8 @@
     "start": "webpack serve --env mode=development",
     "build:dev": "webpack --env mode=development",
     "build:prod": "webpack --env mode=production",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build:prod",
+    "deploy": "gh-pages -d build",
     "dev": "webpack serve"
   },
   "eslintConfig": {
