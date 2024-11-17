@@ -15,10 +15,12 @@ It utilizes JSON data for a predefined ticket search from Moscow to London and b
 
 ## Technologies
 - React, TypeScript, CSS, HTML, BEM.
-- Built with create-react-app
+- Built with Webpack
 
 ## How to run locally
 
-`npm start` - runs the app in the development mode,
+`npm start` - starts the app in development mode using Webpack DevServer. The application will be accessible at http://localhost:3000 by default.
 
-`npm run build` - builds the app for production to the `build` folder.
+`npm run build:dev` - builds the app in development mode and outputs the files to the `build` folder.
+
+`npm run build:prod` - builds the app in production mode and outputs the optimized files to the `build` folder.
