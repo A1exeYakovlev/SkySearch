@@ -5,11 +5,11 @@ import {
   FlightContainer,
   InputChangeEvent,
 } from "../shared.types";
+import { useSearchParams } from "react-router-dom";
 
 interface PickAirlinesProps {
   filteredFlights: FlightContainer[] | null;
   bestPricesArr: BestPrices | null;
-  filterBy: string;
   flightsDataLoading: boolean;
   errorLoadingData: string;
   pickedAirlines: string[] | null;
@@ -19,7 +19,6 @@ interface PickAirlinesProps {
 export default function PickAirlines({
   filteredFlights,
   bestPricesArr,
-  filterBy,
   flightsDataLoading,
   errorLoadingData,
   pickedAirlines,
@@ -31,6 +30,7 @@ export default function PickAirlines({
   const [airlinesBestPrices, setAirlinesBestPrices] = useState<string[] | null>(
     null
   );
+  const [searchParams] = useSearchParams();
 
   function handlePickAirline(e: InputChangeEvent) {
     const airline: string = e.target.value;
@@ -96,6 +96,8 @@ export default function PickAirlines({
         });
       }
 
+      const filterBy = searchParams.get("filterBy");
+
       if (filterBy === "single-transfer") {
         setAirlinesBestPrices(() => getAirlinesBestPrices("ONE_CONNECTION"));
       }
@@ -112,10 +114,10 @@ export default function PickAirlines({
     },
     [
       filteredFlights,
-      filterBy,
       bestPricesArr,
       setAirlinesBestPrices,
       uniqueAirlinesArr,
+      searchParams,
     ]
   );
 

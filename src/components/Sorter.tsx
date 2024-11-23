@@ -1,14 +1,16 @@
+import { useSearchParams } from "react-router-dom";
 import { InputChangeEvent } from "../shared.types";
 
-interface SorterProps {
-  sortBy: string;
-  onSortBy: React.Dispatch<React.SetStateAction<string>>;
-}
+export default function Sorter() {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-export default function Sorter({ sortBy, onSortBy }: SorterProps) {
+  const sortBy = searchParams.get("sortBy");
+
   function handleSorting(e: InputChangeEvent) {
-    onSortBy(e.target.value);
+    searchParams.set("sortBy", e.target.value);
+    setSearchParams(searchParams);
   }
+
   return (
     <div className="sidebar__wrap">
       <p className="sidebar__caption">Сортировать</p>

@@ -1,13 +1,19 @@
+import { useSearchParams } from "react-router-dom";
 import { InputChangeEvent } from "../shared.types";
 
-interface FilterProps {
-  filterBy: string;
-  onFilterBy: React.Dispatch<React.SetStateAction<string>>;
-}
+export default function Filter() {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-export default function Filter({ filterBy, onFilterBy }: FilterProps) {
+  const filterBy = searchParams.get("filterBy");
+
   function handleFilter(e: InputChangeEvent) {
-    filterBy === e.target.value ? onFilterBy("") : onFilterBy(e.target.value);
+    if (filterBy === e.target.value) {
+      searchParams.delete("filterBy");
+    } else {
+      searchParams.set("filterBy", e.target.value);
+    }
+
+    setSearchParams(searchParams);
   }
 
   return (

@@ -1,32 +1,41 @@
+import { useSearchParams } from "react-router-dom";
 import { InputChangeEvent } from "../shared.types";
 
 interface PriceRangeProps {
-  minPriceRange: number | null;
-  maxPriceRange: number | null;
-  onMinPriceRange: React.Dispatch<React.SetStateAction<number | null>>;
-  onMaxPriceRange: React.Dispatch<React.SetStateAction<number | null>>;
   highestPrice: number | null;
   lowestPrice: number;
 }
 
 export default function PriceRange({
-  minPriceRange,
-  maxPriceRange,
-  onMinPriceRange,
-  onMaxPriceRange,
   highestPrice,
   lowestPrice,
 }: PriceRangeProps) {
-  function handleMinPriceRange(e: InputChangeEvent) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const maxPriceRange = searchParams.get("maxPrice");
+  const minPriceRange = searchParams.get("minPrice");
+
+  function handlePriceRange(
+    e: InputChangeEvent,
+    limit: "maxPrice" | "minPrice"
+  ) {
     const val = parseInt(e.target.value);
-    if (isNaN(val)) onMinPriceRange(null);
-    else onMinPriceRange(val);
+
+    if (isNaN(val) || val === 0) {
+      searchParams.delete(limit);
+    } else {
+      searchParams.set(limit, val.toString());
+    }
+
+    setSearchParams(searchParams);
+  }
+
+  function handleMinPriceRange(e: InputChangeEvent) {
+    handlePriceRange(e, "minPrice");
   }
 
   function handleMaxPriceRange(e: InputChangeEvent) {
-    const val = parseInt(e.target.value);
-    if (isNaN(val)) onMaxPriceRange(null);
-    else onMaxPriceRange(val);
+    handlePriceRange(e, "maxPrice");
   }
 
   return (

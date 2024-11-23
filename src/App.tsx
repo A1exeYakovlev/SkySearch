@@ -6,6 +6,13 @@ import Filter from "./components/Filter";
 import FlightList from "./components/FlightList";
 import Logo from "./components/Logo";
 import { useState, useEffect } from "react";
+import {
+  HashRouter,
+  Navigate,
+  Route,
+  Routes,
+  useSearchParams,
+} from "react-router-dom";
 
 import {
   ActionToFlightList,
@@ -19,10 +26,6 @@ export default function App() {
   const [flightsData, setFlightsData] = useState<Data | null>(null);
   const [flightsDataLoading, setFlightsDataLoading] = useState(false);
   const [errorLoadingData, setErrorLoadingData] = useState("");
-  const [sortBy, setSortBy] = useState("price-increase");
-  const [filterBy, setFilterBy] = useState("");
-  const [minPriceRange, setMinPriceRange] = useState<number | null>(null);
-  const [maxPriceRange, setMaxPriceRange] = useState<number | null>(null);
   const [pickedAirlines, setPickedAirlines] = useState<string[] | null>(null);
   const [displayedNumber, setDisplayedNumber] = useState(2);
   const [highestPrice, setHighestPrice] = useState<number | null>(null);
@@ -31,6 +34,13 @@ export default function App() {
     FlightContainer[] | null
   >(null);
   const [bestPricesArr, setBestPricesArr] = useState<BestPrices | null>(null);
+  const [searchParams] = useSearchParams();
+
+  const maxPriceRange: number | null = parseFloat(searchParams.get("maxPrice"));
+  const minPriceRange: number | null = parseFloat(searchParams.get("minPrice"));
+
+  const sortBy = searchParams.get("sortBy");
+  const filterBy = searchParams.get("filterBy");
 
   function handleShowMore() {
     setDisplayedNumber((curNum) => curNum + 2);
@@ -136,6 +146,7 @@ export default function App() {
               parseFloat(flightB?.flight?.price?.total?.amount)
           );
         }
+
         if (sortBy === "price-decrease") {
           current.sort(
             (flightA: FlightContainer, flightB: FlightContainer) =>
@@ -157,12 +168,13 @@ export default function App() {
             return totalDurationA - totalDurationB;
           });
         }
+
         return current;
       };
 
       setFilteredFlights((cur) => manageFlightList(cur, sortFlightList));
     },
-    [flightsData, sortBy, filterBy, minPriceRange, maxPriceRange]
+    [flightsData, searchParams, minPriceRange, maxPriceRange]
   );
 
   useEffect(
@@ -203,7 +215,7 @@ export default function App() {
         }, parseInt(filteredFlights[0]?.flight?.price?.total?.amount))
       );
     },
-    [filteredFlights, filterBy, setMaxPriceRange, setMinPriceRange]
+    [filteredFlights, searchParams]
   );
 
   return (
@@ -211,20 +223,12 @@ export default function App() {
       <div className="container">
         <Logo />
         <Sidebar>
-          <Sorter sortBy={sortBy} onSortBy={setSortBy} />
-          <Filter filterBy={filterBy} onFilterBy={setFilterBy} />
-          <PriceRange
-            lowestPrice={lowestPrice}
-            highestPrice={highestPrice}
-            minPriceRange={minPriceRange}
-            maxPriceRange={maxPriceRange}
-            onMinPriceRange={setMinPriceRange}
-            onMaxPriceRange={setMaxPriceRange}
-          />
+          <Sorter />
+          <Filter />
+          <PriceRange lowestPrice={lowestPrice} highestPrice={highestPrice} />
           <PickAirlines
             flightsDataLoading={flightsDataLoading}
             errorLoadingData={errorLoadingData}
-            filterBy={filterBy}
             bestPricesArr={bestPricesArr}
             filteredFlights={filteredFlights}
             pickedAirlines={pickedAirlines}
