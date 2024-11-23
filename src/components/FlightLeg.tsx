@@ -9,8 +9,8 @@ interface FlightDate {
   month: string;
   date: number;
   dayOfWeek: string;
-  hours: number;
-  minutes: number;
+  hours: string;
+  minutes: string;
 }
 
 export default function FlightLeg({ flightLeg }: FlightLegProps) {
@@ -21,8 +21,8 @@ export default function FlightLeg({ flightLeg }: FlightLegProps) {
     month: "",
     date: 0,
     dayOfWeek: "",
-    hours: 0,
-    minutes: 0,
+    hours: "00:00",
+    minutes: "00:00",
   };
 
   const departureDateObj: FlightDate = {
@@ -30,8 +30,8 @@ export default function FlightLeg({ flightLeg }: FlightLegProps) {
     month: "",
     date: 0,
     dayOfWeek: "",
-    hours: 0,
-    minutes: 0,
+    hours: "00:00",
+    minutes: "00:00",
   };
 
   const travelDuration: { hours: number; minutes: number } = {
@@ -72,8 +72,12 @@ export default function FlightLeg({ flightLeg }: FlightLegProps) {
     outputDate.month = monthArr[dateObj.getMonth()];
     outputDate.date = dateObj.getDate();
     outputDate.dayOfWeek = daysOfWeek[dateObj.getDay()];
-    outputDate.hours = dateObj.getHours();
-    outputDate.minutes = dateObj.getMinutes();
+    outputDate.hours = timeFormat(dateObj.getHours());
+    outputDate.minutes = timeFormat(dateObj.getMinutes());
+
+    function timeFormat(number: number): string {
+      return String(number < 10 ? `0${number}` : number);
+    }
   }
 
   getDateInfo(departureDate, departureDateObj);
