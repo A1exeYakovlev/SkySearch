@@ -1,27 +1,25 @@
 import { useEffect, useState } from "react";
 import { FlightContainer } from "../shared.types";
 import Flight from "./Flight";
+import { useFlights } from "../hooks/useFlights";
 
 interface FlightListProps {
-  pickedAirlines: string[] | null;
   displayedNumber: number;
   onShowMore: () => void;
-  filteredFlights: FlightContainer[] | null;
-  flightsDataLoading: boolean;
-  errorLoadingData: string;
+  pickedAirlines: string[] | null;
 }
 
 export default function FlightList({
-  pickedAirlines,
   displayedNumber,
   onShowMore,
-  filteredFlights,
-  flightsDataLoading,
-  errorLoadingData,
+  pickedAirlines,
 }: FlightListProps) {
   const [flightsToDisplay, setFlightsToDisplay] = useState<
     FlightContainer[] | null
   >(null);
+
+  const { filteredFlights, flightsDataLoading, errorLoadingData } =
+    useFlights() || {};
 
   useEffect(
     function filterAirlines() {

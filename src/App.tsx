@@ -5,195 +5,24 @@ import PriceRange from "./components/PriceRange";
 import Filter from "./components/Filter";
 import FlightList from "./components/FlightList";
 import Logo from "./components/Logo";
-import { useState, useEffect } from "react";
-import {
-  HashRouter,
-  Navigate,
-  Route,
-  Routes,
-  useSearchParams,
-} from "react-router-dom";
-
-import {
-  ActionToFlightList,
-  BestPrices,
-  Data,
-  FlightContainer,
-  FlightLegData,
-} from "./shared.types";
+import { useEffect, useState } from "react";
+import { FlightsProvider } from "./contexts/FlightsContext";
+import { useSearchParams } from "react-router-dom";
+import { useFlights } from "./hooks/useFlights";
+import { FlightContainer } from "./shared.types";
 
 export default function App() {
-  const [flightsData, setFlightsData] = useState<Data | null>(null);
-  const [flightsDataLoading, setFlightsDataLoading] = useState(false);
-  const [errorLoadingData, setErrorLoadingData] = useState("");
-  const [pickedAirlines, setPickedAirlines] = useState<string[] | null>(null);
   const [displayedNumber, setDisplayedNumber] = useState(2);
   const [highestPrice, setHighestPrice] = useState<number | null>(null);
   const [lowestPrice, setLowestPrice] = useState(0);
-  const [filteredFlights, setFilteredFlights] = useState<
-    FlightContainer[] | null
-  >(null);
-  const [bestPricesArr, setBestPricesArr] = useState<BestPrices | null>(null);
   const [searchParams] = useSearchParams();
-
-  const maxPriceRange: number | null = parseFloat(searchParams.get("maxPrice"));
-  const minPriceRange: number | null = parseFloat(searchParams.get("minPrice"));
-
-  const sortBy = searchParams.get("sortBy");
-  const filterBy = searchParams.get("filterBy");
+  const [pickedAirlines, setPickedAirlines] = useState<string[] | null>(null);
 
   function handleShowMore() {
     setDisplayedNumber((curNum) => curNum + 2);
   }
 
-  useEffect(
-    function () {
-      async function importData() {
-        try {
-          setFlightsDataLoading(true);
-          setErrorLoadingData("");
-
-          const data = (await import("./flights.json")).default as Data;
-
-          if (!data) throw new Error("Ошибка в загрузке данных");
-          setFlightsData(data);
-        } catch (err: unknown) {
-          if (err instanceof Error) {
-            console.error(err);
-            setErrorLoadingData(err.message);
-          } else {
-            setErrorLoadingData(
-              "Произошла неизвестная ошибка при загрузке данных"
-            );
-          }
-        } finally {
-          setFlightsDataLoading(false);
-        }
-      }
-      importData();
-    },
-    [setFlightsData, setFlightsDataLoading, setErrorLoadingData]
-  );
-
-  useEffect(
-    function filteringFlights() {
-      if (!flightsData) return;
-      const {
-        result: { bestPrices, flights },
-      } = flightsData;
-      setBestPricesArr(bestPrices);
-      setFilteredFlights(flights);
-
-      const manageFlightList = function (
-        current: FlightContainer[] | null,
-        actionFunc: ActionToFlightList
-      ): FlightContainer[] | null {
-        if (Array.isArray(current)) {
-          return actionFunc(current);
-        }
-        return null;
-      };
-
-      const filterPriceRange = function (
-        current: FlightContainer[]
-      ): FlightContainer[] {
-        return current
-          .filter(
-            (flight) =>
-              parseFloat(flight?.flight?.price?.total?.amount) >=
-              (minPriceRange || 0)
-          )
-          .filter(
-            (flight) =>
-              parseFloat(flight?.flight?.price?.total?.amount) <=
-              (maxPriceRange || parseFloat(flight?.flight?.price.total.amount))
-          );
-      };
-
-      setFilteredFlights((cur) => manageFlightList(cur, filterPriceRange));
-
-      const filterFlightList = function (
-        current: FlightContainer[]
-      ): FlightContainer[] {
-        if (filterBy === "single-transfer") {
-          return current.filter(
-            (flight: FlightContainer) =>
-              flight?.flight?.legs[0]?.segments.length === 2 &&
-              flight?.flight?.legs[1]?.segments.length === 2
-          );
-        }
-
-        if (filterBy === "no-transfer") {
-          return current.filter(
-            (flight: FlightContainer) =>
-              flight?.flight?.legs[0]?.segments.length === 1 &&
-              flight?.flight?.legs[1]?.segments.length === 1
-          );
-        }
-
-        return current;
-      };
-
-      setFilteredFlights((cur) => manageFlightList(cur, filterFlightList));
-
-      const sortFlightList = function (
-        current: FlightContainer[]
-      ): FlightContainer[] {
-        if (sortBy === "price-increase") {
-          current.sort(
-            (flightA: FlightContainer, flightB: FlightContainer) =>
-              parseFloat(flightA?.flight?.price?.total?.amount) -
-              parseFloat(flightB?.flight?.price?.total?.amount)
-          );
-        }
-
-        if (sortBy === "price-decrease") {
-          current.sort(
-            (flightA: FlightContainer, flightB: FlightContainer) =>
-              parseFloat(flightB?.flight?.price?.total?.amount) -
-              parseFloat(flightA?.flight?.price?.total?.amount)
-          );
-        }
-
-        if (sortBy === "travel-duration") {
-          current.sort((flightA: FlightContainer, flightB: FlightContainer) => {
-            const totalDurationA = flightA?.flight?.legs.reduce(
-              (total: number, leg: FlightLegData) => total + leg?.duration,
-              0
-            );
-            const totalDurationB = flightB?.flight?.legs.reduce(
-              (total: number, leg: FlightLegData) => total + leg?.duration,
-              0
-            );
-            return totalDurationA - totalDurationB;
-          });
-        }
-
-        return current;
-      };
-
-      setFilteredFlights((cur) => manageFlightList(cur, sortFlightList));
-    },
-    [flightsData, searchParams, minPriceRange, maxPriceRange]
-  );
-
-  useEffect(
-    function updatePickedAirlines() {
-      if (!filteredFlights) return;
-
-      setPickedAirlines((cur) => {
-        if (!cur) return null;
-
-        return cur.filter((airline) => {
-          return filteredFlights.some(
-            (flight: FlightContainer) =>
-              flight?.flight?.carrier?.caption === airline
-          );
-        });
-      });
-    },
-    [filteredFlights, setPickedAirlines]
-  );
+  const { filteredFlights } = useFlights() || {};
 
   useEffect(
     function findPriceRange() {
@@ -218,31 +47,44 @@ export default function App() {
     [filteredFlights, searchParams]
   );
 
+  useEffect(
+    function updatePickedAirlines() {
+      if (!filteredFlights) return;
+
+      setPickedAirlines((cur) => {
+        if (!cur) return null;
+
+        return cur.filter((airline) => {
+          return filteredFlights.some(
+            (flight: FlightContainer) =>
+              flight?.flight?.carrier?.caption === airline
+          );
+        });
+      });
+    },
+    [filteredFlights, setPickedAirlines]
+  );
+
   return (
     <div className="app">
       <div className="container">
-        <Logo />
-        <Sidebar>
-          <Sorter />
-          <Filter />
-          <PriceRange lowestPrice={lowestPrice} highestPrice={highestPrice} />
-          <PickAirlines
-            flightsDataLoading={flightsDataLoading}
-            errorLoadingData={errorLoadingData}
-            bestPricesArr={bestPricesArr}
-            filteredFlights={filteredFlights}
+        <FlightsProvider>
+          <Logo />
+          <Sidebar>
+            <Sorter />
+            <Filter />
+            <PriceRange lowestPrice={lowestPrice} highestPrice={highestPrice} />
+            <PickAirlines
+              pickedAirlines={pickedAirlines}
+              onPickedAirlines={setPickedAirlines}
+            />
+          </Sidebar>
+          <FlightList
+            displayedNumber={displayedNumber}
+            onShowMore={handleShowMore}
             pickedAirlines={pickedAirlines}
-            onPickedAirlines={setPickedAirlines}
           />
-        </Sidebar>
-        <FlightList
-          pickedAirlines={pickedAirlines}
-          displayedNumber={displayedNumber}
-          onShowMore={handleShowMore}
-          filteredFlights={filteredFlights}
-          flightsDataLoading={flightsDataLoading}
-          errorLoadingData={errorLoadingData}
-        />
+        </FlightsProvider>
       </div>
     </div>
   );

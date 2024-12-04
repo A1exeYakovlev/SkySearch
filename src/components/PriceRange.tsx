@@ -2,8 +2,8 @@ import { useSearchParams } from "react-router-dom";
 import { InputChangeEvent } from "../shared.types";
 
 interface PriceRangeProps {
-  highestPrice: number | null;
   lowestPrice: number;
+  highestPrice: number;
 }
 
 export default function PriceRange({

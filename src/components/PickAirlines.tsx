@@ -1,29 +1,28 @@
 import { useEffect, useState } from "react";
 import {
-  BestPrices,
   BestPricesFlights,
   FlightContainer,
   InputChangeEvent,
 } from "../shared.types";
 import { useSearchParams } from "react-router-dom";
+import { useFlights } from "../hooks/useFlights";
 
 interface PickAirlinesProps {
-  filteredFlights: FlightContainer[] | null;
-  bestPricesArr: BestPrices | null;
-  flightsDataLoading: boolean;
-  errorLoadingData: string;
   pickedAirlines: string[] | null;
   onPickedAirlines: React.Dispatch<React.SetStateAction<string[] | null>>;
 }
 
 export default function PickAirlines({
-  filteredFlights,
-  bestPricesArr,
-  flightsDataLoading,
-  errorLoadingData,
   pickedAirlines,
   onPickedAirlines,
 }: PickAirlinesProps) {
+  const {
+    flightsDataLoading,
+    errorLoadingData,
+    filteredFlights,
+    bestPricesArr,
+  } = useFlights() || {};
+
   const [uniqueAirlinesArr, setUniqueAirlinesArr] = useState<string[] | null>(
     null
   );
