@@ -22,10 +22,6 @@ export interface FlightContainer {
   flightToken: string;
 }
 
-export type ActionToFlightList = (
-  current: FlightContainer[]
-) => FlightContainer[];
-
 export interface BestPricesFlights {
   carrier: AirlineDescriptor;
   price: Price;
