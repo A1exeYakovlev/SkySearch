@@ -80,3 +80,21 @@ export const sortFlightList = function (
 
   return currentFlights;
 };
+
+export function findPriceLimit(
+  flights: FlightContainer[],
+  priceLimit: "max" | "min"
+): number {
+  return flights.reduce((price, flight: FlightContainer) => {
+    const flightTotalPrice =
+      parseFloat(flight?.flight?.price?.total?.amount) || 0;
+
+    if (priceLimit === "max") {
+      return Math.max(price, flightTotalPrice);
+    }
+
+    if (priceLimit === "min") {
+      return Math.min(price, flightTotalPrice);
+    }
+  }, parseFloat(flights[0]?.flight?.price?.total?.amount));
+}

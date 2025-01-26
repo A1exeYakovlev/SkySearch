@@ -6,15 +6,13 @@ import Filter from "./components/Filter";
 import FlightList from "./components/FlightList";
 import Logo from "./components/Logo";
 import { useEffect, useState } from "react";
-import { FlightsProvider } from "./contexts/FlightsContext";
 import { useSearchParams } from "react-router-dom";
 import { useFlights } from "./hooks/useFlights";
 import { FlightContainer } from "./shared.types";
+import { FlightsProvider } from "./contexts/FlightsContext";
 
 export default function App() {
   const [displayedNumber, setDisplayedNumber] = useState(2);
-  const [highestPrice, setHighestPrice] = useState<number | null>(null);
-  const [lowestPrice, setLowestPrice] = useState(0);
   const [searchParams] = useSearchParams();
   const [pickedAirlines, setPickedAirlines] = useState<string[] | null>(null);
 
@@ -23,29 +21,6 @@ export default function App() {
   }
 
   const { filteredFlights } = useFlights() || {};
-
-  useEffect(
-    function findPriceRange() {
-      if (!filteredFlights) return;
-
-      setHighestPrice(
-        filteredFlights.reduce((maxPrice, flight: FlightContainer) => {
-          const flightTotalPrice =
-            parseFloat(flight?.flight?.price?.total?.amount) || 0;
-          return Math.max(maxPrice, flightTotalPrice);
-        }, parseFloat(filteredFlights[0]?.flight?.price?.total?.amount))
-      );
-
-      setLowestPrice(
-        filteredFlights.reduce((minPrice, flight: FlightContainer) => {
-          const flightTotalPrice =
-            parseInt(flight?.flight?.price?.total?.amount) || 0;
-          return Math.min(minPrice, flightTotalPrice);
-        }, parseInt(filteredFlights[0]?.flight?.price?.total?.amount))
-      );
-    },
-    [filteredFlights, searchParams]
-  );
 
   useEffect(
     function updatePickedAirlines() {
@@ -73,7 +48,7 @@ export default function App() {
           <Sidebar>
             <Sorter />
             <Filter />
-            <PriceRange lowestPrice={lowestPrice} highestPrice={highestPrice} />
+            <PriceRange />
             <PickAirlines
               pickedAirlines={pickedAirlines}
               onPickedAirlines={setPickedAirlines}

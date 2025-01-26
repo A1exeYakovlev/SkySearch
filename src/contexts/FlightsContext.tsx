@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import {
   filterPriceRange,
   filterTransfer,
+  findPriceLimit,
   sortFlightList,
 } from "../utils/FlightsUtils";
 
@@ -17,6 +18,8 @@ interface FlightsContextValues {
   errorLoadingData: string;
   setErrorLoadingData: React.Dispatch<React.SetStateAction<string>>;
   bestPricesArr: BestPrices;
+  lowestPrice: number;
+  highestPrice: number;
 }
 
 interface FlightsProviderProps {
@@ -40,6 +43,8 @@ export function FlightsProvider({ children }: FlightsProviderProps) {
   const filterBy = searchParams.get("filterBy");
   const maxPriceRange = searchParams.get("maxPrice");
   const minPriceRange = searchParams.get("minPrice");
+  const [highestPrice, setHighestPrice] = useState<number | null>(null);
+  const [lowestPrice, setLowestPrice] = useState(0);
 
   useEffect(
     function () {
@@ -99,6 +104,16 @@ export function FlightsProvider({ children }: FlightsProviderProps) {
     [flightsData, searchParams, minPriceRange, maxPriceRange]
   );
 
+  useEffect(
+    function findPriceRange() {
+      if (!filteredFlights) return;
+
+      setLowestPrice(findPriceLimit(filteredFlights, "min"));
+      setHighestPrice(findPriceLimit(filteredFlights, "max"));
+    },
+    [filteredFlights, searchParams]
+  );
+
   return (
     <FlightsContext.Provider
       value={{
@@ -109,6 +124,8 @@ export function FlightsProvider({ children }: FlightsProviderProps) {
         filteredFlights,
         setFilteredFlights,
         bestPricesArr,
+        lowestPrice,
+        highestPrice,
       }}
     >
       {children}

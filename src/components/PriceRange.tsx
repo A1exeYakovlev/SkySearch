@@ -1,19 +1,13 @@
 import { useSearchParams } from "react-router-dom";
 import { InputChangeEvent } from "../shared.types";
+import { useFlights } from "../hooks/useFlights";
 
-interface PriceRangeProps {
-  lowestPrice: number;
-  highestPrice: number;
-}
-
-export default function PriceRange({
-  highestPrice,
-  lowestPrice,
-}: PriceRangeProps) {
+export default function PriceRange() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const maxPriceRange = searchParams.get("maxPrice");
   const minPriceRange = searchParams.get("minPrice");
+  const { lowestPrice, highestPrice } = useFlights() || {};
 
   function handlePriceRange(
     e: InputChangeEvent,
