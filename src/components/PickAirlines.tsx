@@ -6,22 +6,12 @@ import {
 } from "../shared.types";
 import { useSearchParams } from "react-router-dom";
 import { useFlights } from "../hooks/useFlights";
+import { useFilteredFlights } from "../hooks/useFilteredFlights";
 
-interface PickAirlinesProps {
-  pickedAirlines: string[] | null;
-  onPickedAirlines: React.Dispatch<React.SetStateAction<string[] | null>>;
-}
-
-export default function PickAirlines({
-  pickedAirlines,
-  onPickedAirlines,
-}: PickAirlinesProps) {
-  const {
-    flightsDataLoading,
-    errorLoadingData,
-    filteredFlights,
-    bestPricesArr,
-  } = useFlights() || {};
+export default function PickAirlines() {
+  const { flightsDataLoading, errorLoadingData } = useFlights() || {};
+  const { filteredFlights, bestPricesArr, pickedAirlines, setPickedAirlines } =
+    useFilteredFlights() || {};
 
   const [uniqueAirlinesArr, setUniqueAirlinesArr] = useState<string[] | null>(
     null
@@ -34,7 +24,7 @@ export default function PickAirlines({
   function handlePickAirline(e: InputChangeEvent) {
     const airline: string = e.target.value;
 
-    onPickedAirlines((cur) => {
+    setPickedAirlines((cur) => {
       if (!cur) {
         return [airline];
       }

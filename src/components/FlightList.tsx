@@ -2,24 +2,20 @@ import { useEffect, useState } from "react";
 import { FlightContainer } from "../shared.types";
 import Flight from "./Flight";
 import { useFlights } from "../hooks/useFlights";
+import { useFilteredFlights } from "../hooks/useFilteredFlights";
 
-interface FlightListProps {
-  displayedNumber: number;
-  onShowMore: () => void;
-  pickedAirlines: string[] | null;
-}
-
-export default function FlightList({
-  displayedNumber,
-  onShowMore,
-  pickedAirlines,
-}: FlightListProps) {
+export default function FlightList() {
   const [flightsToDisplay, setFlightsToDisplay] = useState<
     FlightContainer[] | null
   >(null);
+  const [displayedNumber, setDisplayedNumber] = useState(2);
 
-  const { filteredFlights, flightsDataLoading, errorLoadingData } =
-    useFlights() || {};
+  const { flightsDataLoading, errorLoadingData } = useFlights() || {};
+  const { filteredFlights, pickedAirlines } = useFilteredFlights() || {};
+
+  function handleShowMore() {
+    setDisplayedNumber((curNum) => curNum + 2);
+  }
 
   useEffect(
     function filterAirlines() {
@@ -58,7 +54,7 @@ export default function FlightList({
             ))}
             <button
               className="app__show-more-btn show-more-btn"
-              onClick={onShowMore}
+              onClick={handleShowMore}
             >
               Показать еще
             </button>
