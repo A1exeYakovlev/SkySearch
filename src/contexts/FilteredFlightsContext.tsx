@@ -6,7 +6,7 @@ import {
   filterTransfer,
   findPriceLimit,
   sortFlightList,
-} from "../utils/FlightsUtils";
+} from "../utils/filteredFlightsUtils";
 import { useSearchParams } from "react-router-dom";
 
 interface FilteredFlightsContextValues {

@@ -138,3 +138,12 @@ interface ServicesDetails {
   };
   paidLuggage: { [index: string]: unknown };
 }
+
+export interface FlightDate {
+  year: number;
+  month: string;
+  date: number;
+  dayOfWeek: string;
+  hours: string;
+  minutes: string;
+}
